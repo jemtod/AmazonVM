@@ -1,0 +1,49 @@
+{
+  "name": "amazon-email-validator",
+  "version": "1.0.0",
+  "description": "Tools validator untuk mengecek apakah email terdaftar di Amazon",
+  "main": "index.js",
+  "scripts": {
+    "test:single": "node amazonEmailValidator.js",
+    "test:demo": "node demo.js",
+    "test:advanced": "node testValidator.js",
+    "server": "node server.js",
+    "start": "node server.js",
+    "validate": "node amazonEmailValidator.js"
+  },
+  "keywords": [
+    "amazon",
+    "email",
+    "validator",
+    "checker",
+    "registration"
+  ],
+  "author": "Amazon Email Validator Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/amazon-email-validator"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "optionalDependencies": {
+    "express": "^4.18.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "amazon",
+    "email",
+    "validator",
+    "checker",
+    "registration",
+    "verification",
+    "nodejs",
+    "api"
+  ],
+  "homepage": "https://github.com/yourusername/amazon-email-validator#readme",
+  "bugs": {
+    "url": "https://github.com/yourusername/amazon-email-validator/issues"
+  }
+}
