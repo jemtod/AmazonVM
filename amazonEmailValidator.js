@@ -1,4 +1,5 @@
 const https = require('https');
+const { HttpsProxyAgent } = require('https-proxy-agent');
 
 /**
  * Amazon Email Validator
@@ -7,7 +8,34 @@ const https = require('https');
  * @param {string} email - Email yang ingin dicek
  * @returns {Promise<{isRegistered: boolean, message: string}>}
  */
-async function validateAmazonEmail(email) {
+function buildProxyUrl(proxy) {
+  if (!proxy) return null;
+
+  // Already a URL with scheme
+  if (proxy.startsWith('http://') || proxy.startsWith('https://')) {
+    return proxy;
+  }
+
+  const parts = proxy.split(':');
+
+  // ip:port
+  if (parts.length === 2) {
+    return `http://${parts[0]}:${parts[1]}`;
+  }
+
+  // ip:port:user:pass
+  if (parts.length >= 4) {
+    const [host, port, user, pass] = parts;
+    const encodedUser = encodeURIComponent(user || '');
+    const encodedPass = encodeURIComponent(pass || '');
+    return `http://${encodedUser}:${encodedPass}@${host}:${port}`;
+  }
+
+  // Fallback
+  return `http://${proxy}`;
+}
+
+async function validateAmazonEmail(email, options = {}) {
   return new Promise((resolve, reject) => {
     // Validasi format email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,7 +51,7 @@ async function validateAmazonEmail(email) {
     postData.append('email', email);
     postData.append('action', 'validate-email');
 
-    const options = {
+    const requestOptions = {
       hostname: 'www.amazon.com',
       path: '/ap/signin',
       method: 'POST',
@@ -36,7 +64,15 @@ async function validateAmazonEmail(email) {
       }
     };
 
-    const req = https.request(options, (res) => {
+    // Attach proxy agent if provided
+    if (options.proxy) {
+      const proxyUrl = buildProxyUrl(options.proxy);
+      if (proxyUrl) {
+        requestOptions.agent = new HttpsProxyAgent(proxyUrl);
+      }
+    }
+
+    const req = https.request(requestOptions, (res) => {
       let data = '';
 
       res.on('data', (chunk) => {
@@ -146,7 +182,8 @@ async function validateMultipleEmails(emails) {
 // Export untuk digunakan sebagai module
 module.exports = {
   validateAmazonEmail,
-  validateMultipleEmails
+  validateMultipleEmails,
+  buildProxyUrl
 };
 
 // Jika dijalankan langsung dari command line

@@ -115,8 +115,9 @@ class AdvancedAmazonValidator {
   /**
    * Main validation function
    */
-  async validate(email) {
+  async validate(email, options = {}) {
     try {
+      const { proxy = null } = options;
       // Check rate limit
       this.checkRateLimit();
 
@@ -129,7 +130,7 @@ class AdvancedAmazonValidator {
       // Validate dengan retry
       this.log('info', 'Validating email', { email });
       const result = await this.retryWithBackoff(
-        () => validateAmazonEmail(email)
+        () => validateAmazonEmail(email, { proxy })
       );
 
       // Cache result
@@ -137,7 +138,8 @@ class AdvancedAmazonValidator {
 
       this.log('info', 'Validation complete', {
         email,
-        isRegistered: result.isRegistered
+        isRegistered: result.isRegistered,
+        proxyEnabled: !!proxy
       });
 
       return result;
@@ -154,19 +156,27 @@ class AdvancedAmazonValidator {
    * Batch validation dengan built-in rate limiting
    */
   async validateBatch(emails, options = {}) {
-    const { delayMs = 1000, stopOnError = false } = options;
+    const { delayMs = 1000, stopOnError = false, proxy = null, proxies = [] } = options;
     const results = [];
+
+    const rotationEnabled = Array.isArray(proxies) && proxies.length > 0;
 
     this.log('info', 'Starting batch validation', {
       emailCount: emails.length,
       delayMs,
-      stopOnError
+      stopOnError,
+      proxyEnabled: !!proxy,
+      proxyRotation: rotationEnabled ? proxies.length : 0
     });
 
     for (let i = 0; i < emails.length; i++) {
       try {
         const email = emails[i];
-        const result = await this.validate(email);
+        const proxyForThisEmail = rotationEnabled
+          ? proxies[i % proxies.length]
+          : proxy;
+
+        const result = await this.validate(email, { proxy: proxyForThisEmail });
         results.push({
           email,
           ...result,

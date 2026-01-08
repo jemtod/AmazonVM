@@ -4,12 +4,9 @@
   "description": "Tools validator untuk mengecek apakah email terdaftar di Amazon",
   "main": "index.js",
   "scripts": {
-    "test:single": "node amazonEmailValidator.js",
-    "test:demo": "node demo.js",
-    "test:advanced": "node testValidator.js",
+    "cli": "node cli.js",
     "server": "node server.js",
-    "start": "node server.js",
-    "validate": "node amazonEmailValidator.js"
+    "start": "node server.js"
   },
   "keywords": [
     "amazon",
@@ -18,11 +15,11 @@
     "checker",
     "registration"
   ],
-  "author": "Amazon Email Validator Team",
+  "author": "jemtod",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/amazon-email-validator"
+    "url": "https://github.com/jemtod/amazon-email-validator"
   },
   "engines": {
     "node": ">=12.0.0"
@@ -42,8 +39,8 @@
     "nodejs",
     "api"
   ],
-  "homepage": "https://github.com/yourusername/amazon-email-validator#readme",
+  "homepage": "https://github.com/jemtod/amazon-email-validator#readme",
   "bugs": {
-    "url": "https://github.com/yourusername/amazon-email-validator/issues"
+    "url": "https://github.com/jemtod/amazon-email-validator/issues"
   }
 }
